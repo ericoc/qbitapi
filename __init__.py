@@ -4,8 +4,11 @@
 
 def main():
     '''main()'''
-    x = int(input("What's x? "))
-    print(x, "squared is", square(x))
+    try:
+        x = int(input("What's x? "))
+        print(x, "squared is", square(x))
+    except ValueError:
+        print("That's not a valid number!")
 
 
 def square(n):
