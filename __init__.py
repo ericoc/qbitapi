@@ -20,7 +20,6 @@ def pre_request():
     '''Before request'''
 #    g.now = datetime.now(tz=timezone.utc)
     g.qbit = qbc()
-    pass
 
 
 @app.context_processor
