@@ -18,6 +18,7 @@ button, input {
 
 a:link, a:visited {
     color:              #09f;
+    text-decoration:    none;
 }
 
 a:hover {
@@ -37,21 +38,20 @@ h2, .gridjs-head, .gridjs-footer {
     text-align:         center;
 }
 
-nav ul {
+nav ul, footer ul {
     list-style:         none;
     text-align:         center;
 }
 
-nav ul li {
+nav ul li, footer ul li {
     display:            inline-block;
     padding-left:       1em;
     padding-right:      1em;
-    font-size:          1.25em;
+    font-size:          1.1em;
 }
 
 footer {
     border-top:         0.1em solid #666;
-    font-size:          small;
     padding-top:        0.5em;
 }
 
@@ -111,3 +111,18 @@ td {
 .gridjs-th-content, tr:nth-child(2n) {
     background-color:   #333; 
 }
+
+.category-books::after { content: ' 📚'; }
+.category-edu::after { content: ' 🏫'; }
+.category-music::after { content: ' 🎵'; }
+.category-radarr::after, .category-radarr-imported::after { content: ' 🎥'; }
+.category-sonarr::after, .category-sonarr-imported::after { content: ' 📺'; }
+.category-Uncategorized::after { content: ' ❓'; }
+
+.state-up::after, .state-forcedup::after { content: ' ⬆️'; }
+.state-dl::after, .state-forceddl::after { content: ' ⬇️'; }
+.state-pauseddl::after { content: ' ⏸️⬇️'; }
+.state-pausedup::after { content: ' ⏸️⬆️'; }
+.state-stalled::after { content: ' ⛔️'; }
+.state-stalleddl::after { content: ' ⛔️⬇️'; }
+.state-stalledup::after { content: ' ⛔️⬆️'; }

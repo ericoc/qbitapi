@@ -20,28 +20,19 @@
         </header>
         <nav>
             <ul>
-                <li>
-                    <a href="https://plex.home.ericoc.com/" target="_new">Plex</a>
-                </li>
-                <li>
-                    <a href="https://radarr.home.ericoc.com/" target="_new">Radarr</a>
-                </li>
-                <li>
-                    <a href="https://sonarr.home.ericoc.com/" target="_new">Sonarr</a>
-                </li>
+                <li><a href="https://plex.home.ericoc.com/" target="_blank">Plex</a></li>
+                <li><a href="https://radarr.home.ericoc.com/" target="_blank">Radarr</a></li>
+                <li><a href="https://sonarr.home.ericoc.com/" target="_blank">Sonarr</a></li>
+                <li><a href="https://jackett.home.ericoc.com/" target="_blank">Jackett</a></li>
             </ul>
         </nav>
         <div id="content">
-            <h2>
-                {% block header %}{% endblock header %}
-            </h2>
+            <h2>{% block header %}{% endblock header %}</h2>
 {%- with messages = get_flashed_messages(with_categories=True) %}
     {%- if messages %}
             <ul id="flashes">
         {%- for category, message in messages %}
-                <li class="flash-{{ category }}">
-                    {{ message }}
-                </li>
+                <li class="flash-{{ category }}">{{ message }}</li>
         {%- endfor %}
             </ul>
     {%- endif %}
@@ -51,9 +42,10 @@
         </div>
         <footer>
 {%- block footer %}
-    {%- if qbit_version is defined %}
-            qBittorrent {{ qbit_version }}
-    {%- endif %}
+            <ul>
+                <li><a href="https://qb.gaw.sh/" target="_blank">qBittorrent</a></li>
+                <li><a href="https://gaw.sh/" target="_blank">vueTorrent</a></li>
+            </ul>
 {%- endblock footer %}
         </footer>
     </body>

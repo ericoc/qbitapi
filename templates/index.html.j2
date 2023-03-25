@@ -1,98 +1,33 @@
 {% extends "layout.html.j2" %}
 {%- block title %}
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        {{ torrents | length }}
-    {%- else %}
-        0
-    {%- endif %}
-    Torrents
+    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}{{ torrents | length }}{% else %}0{% endif %} Torrents
 {%- endblock title %}
 {%- block header %}
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        {{ torrents | length }}
-    {%- else %}
-        0
-    {%- endif %}
-    Torrents
+    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}{{ torrents | length }}{% else %}0{% endif %} Torrents
 {%- endblock header %}
-{%- macro display_category(category) %}
-    {%- set category_emojis = {
-        'books': '📚', 'edu': '🏫', 'radarr': '🎥', 'sonarr': '📺', 'music': '🎵',
-        'Uncategorized': '❓' } -%}
-    gridjs.html(`<a href="{{ url_for('search_category', category=category) }}">{{- category }}</a>
-    {%- if category in category_emojis.keys() %} {{ category_emojis[category] }}{%- endif -%}`)
-{%- endmacro -%}
 {%- block scripts %}
     {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
         <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+        <script src="{{ url_for('static', filename='fmt.js') }}"></script>
         <script>
-            function emojiCategory (category) {
-
-                if (category == 'books') {
-                    var emoji = '📚'
-                } else if (category == 'edu') {
-                    var emoji = '🏫'
-                } else if (category == 'radarr') {
-                    var emoji = '🎥';
-                } else if (category == 'sonarr') {
-                    var emoji = '📺';
-                } else if (category == 'music') {
-                    var emoji = '🎵';
-                } else {
-                    var emoji = '❓';
-                };
-                return '<a href="/category/' + category + '">' + category + '</a> ' + emoji;
-            };
-            function colorRatio (ratio) {
-                if (ratio >= 1) {
-                    var ratio_class = 'done';
-                } else if (ratio >= 0.5) {
-                    var ratio_class = 'high';
-                } else if (ratio >= 0.25) {
-                    var ratio_class = 'low';
-                } else {
-                    var ratio_class = 'verylow';
-                };
-                return '<span class="ratio-' + ratio_class + '">' + ratio + '</span>';
-            };
+            // gridjs torrent table
             function showTorrents(where) {
                 new gridjs.Grid({
                     columns: [
-                        {
-                            id: 'state',
-                            name: 'State'
-                        },
-                        {
-                            id: 'name',
-                            name: 'Name'
-                        },
-                        {
-                            id: 'category',
-                            name: 'Category',
-                            formatter: cell => gridjs.html(emojiCategory(cell))
-                        },
-                        {
-                            id: 'ratio',
-                            name: 'Ratio',
-                            formatter: cell => gridjs.html(colorRatio(cell))
-                        },
-                        {
-                            id: 'size',
-                            name: 'Size'
-                        },
-                        {
-                            id: 'uploaded',
-                            name: 'Uploaded'
-                        },
-                        {
-                            id: 'downloaded',
-                            name: 'Downloaded'
-                        }
-                    ],
-                    data: {{ torrents | tojson }},
-                    search: true, sort: true, pagination: true,
-                    pagination: { limit: 50 }
-                }).render(where); 
+                        { id: 'state', name: 'State', formatter: cell => gridjs.html(fmtState(cell)) },
+                        { id: 'name', name: 'Name', formatter: cell => gridjs.html(fmtName(cell)) },
+                        { id: 'category', name: 'Category', formatter: cell => gridjs.html(fmtCategory(cell)) },
+                        { id: 'ratio', name: 'Ratio', formatter: cell => gridjs.html(fmtRatio(cell)) },
+                        { id: 'size', name: 'Size', formatter: cell => gridjs.html(fmtSize(cell)) },
+                    <!--
+                    /*
+                        { id: 'uploaded', name: 'Uploaded', formatter: cell => gridjs.html(fmtSize(cell)) },
+                        { id: 'downloaded', name: 'Downloaded', formatter: cell => gridjs.html(fmtSize(cell)) },
+                    */
+                    -->
+                        { id: 'added_on', name: 'Added', formatter: cell => gridjs.html(fmtAdded(cell)) },
+                    ], data: {{ torrents | tojson }}, search: true, sort: true, pagination: { limit: 50 }
+                }).render(where);
             };
         </script>
     {%- endif %}
@@ -100,12 +35,8 @@
 {%- block content %}
     {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
         <div id="torrent-table"></div>
-        <script>
-            showTorrents(document.getElementById('torrent-table'));
-        </script>
+        <script>showTorrents(document.getElementById('torrent-table'));</script>
     {%- else %}
-        <h3>
-            No Torrents Found
-        </h3>
+        <h3>No Torrents Found</h3>
     {%- endif %}
 {%- endblock content %}
