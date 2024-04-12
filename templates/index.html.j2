@@ -1,42 +1,36 @@
-{% extends "layout.html.j2" %}
-{%- block title %}
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}{{ torrents | length }}{% else %}0{% endif %} Torrents
-{%- endblock title %}
-{%- block header %}
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}{{ torrents | length }}{% else %}0{% endif %} Torrents
-{%- endblock header %}
+{% extends "base.html.j2" %}
 {%- block scripts %}
     {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-        <script src="{{ url_for('static', filename='fmt.js') }}"></script>
-        <script>
-            // gridjs torrent table
-            function showTorrents(where) {
-                new gridjs.Grid({
-                    columns: [
-                        { id: 'state', name: 'State', formatter: cell => gridjs.html(fmtState(cell)) },
-                        { id: 'name', name: 'Name', formatter: cell => gridjs.html(fmtName(cell)) },
-                        { id: 'category', name: 'Category', formatter: cell => gridjs.html(fmtCategory(cell)) },
-                        { id: 'ratio', name: 'Ratio', formatter: cell => gridjs.html(fmtRatio(cell)) },
-                        { id: 'size', name: 'Size', formatter: cell => gridjs.html(fmtSize(cell)) },
-                    <!--
-                    /*
-                        { id: 'uploaded', name: 'Uploaded', formatter: cell => gridjs.html(fmtSize(cell)) },
-                        { id: 'downloaded', name: 'Downloaded', formatter: cell => gridjs.html(fmtSize(cell)) },
-                    */
-                    -->
-                        { id: 'added_on', name: 'Added', formatter: cell => gridjs.html(fmtAdded(cell)) },
-                    ], data: {{ torrents | tojson }}, search: true, sort: true, pagination: { limit: 50 }
-                }).render(where);
-            };
-        </script>
+        <script src="{{ url_for('static', filename='tbl.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
     {%- endif %}
 {%- endblock scripts %}
 {%- block content %}
+    <div class="container-fluid">
     {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        <div id="torrent-table"></div>
-        <script>showTorrents(document.getElementById('torrent-table'));</script>
+        <table class="table table-dark table-sm table-striped w-100" id="torrentsTable"></table>
+        <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
+        <script>
+            const torrentData = JSON.parse(document.getElementById("torrents").textContent);
+            torrentData.forEach(buildTorrent);
+            const pageTable = new DataTable(
+                "#torrentsTable", {
+                    columns: columns,
+                    data: torrents,
+                    lengthMenu: [
+                        [5, 10, 15, 20, 25, 50, 75, 100, -1],
+                        [5, 10, 15, 20, 25, 50, 75, 100, "all"]
+                    ],
+                    order: [[6, "desc"],],
+                    pageLength: 15
+                }
+            );
+        </script>
     {%- else %}
-        <h3>No Torrents Found</h3>
+        <h3 title="No torrents found.">No torrents found.</h3>
     {%- endif %}
+    </div>
 {%- endblock content %}
