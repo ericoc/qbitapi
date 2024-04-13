@@ -46,44 +46,70 @@
     </head>
     <body class="m-1 p-1">
         <header class="row container-fluid">
-            <h1 class="col" title="qBitAPI">
+            <nav class="col navbar navbar-expand-lg">
                 <a href="{{ url_for('index') }}">
-                    <img alt="qBitAPI" id="logo" src="{{ url_for('static', filename='icon.png') }}" title="qBitAPI">
+                    <img alt="qBitAPI" class="navbar-brand" id="logo" src="{{ url_for('static', filename='icon.png') }}" title="qBitAPI">
                 </a>
-            </h1>
-            <nav class="col navbar navbar-expand-lg">
-                <ul class="navbar-nav nav-underline">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
-                        <ul class="dropdown-menu" id="categoryList">
-                        </ul>
-                        <script id="categoryJSON" type="application/json">{{ categories | tojson }}</script>
-                        <script>
-                            const categoryData = JSON.parse(document.getElementById("categoryJSON").textContent);
-                            for (const [category, count] of Object.entries(categoryData)) {
-                                const liElement = document.createElement("li");
-                                liElement.className = "nav-item";
-                                const aElement = fmtCategory(category, true);
-                                aElement.classList.add("dropdown-item");
-                                aElement.classList.add("nav-link");
-                                aElement.innerText += ` (${count})`;
-                                liElement.appendChild(aElement);
-                                aElement.title = liElement.title = `${category} (${count})`;
-                                document.getElementById("categoryList").appendChild(liElement);
-                            };
-                        </script>
-                    </li>
-                    <li class="nav-item" title="Plex"><a class="nav-link" href="https://plex.home.ericoc.com/" target="_blank">Plex</a></li>
-                    <li class="nav-item" title="Prowlarr"><a class="nav-link" href="https://prowlarr.home.ericoc.com/" target="_blank">Prowlarr</a></li>
-                    <li class="nav-item" title="Radarr"><a class="nav-link" href="https://radarr.home.ericoc.com/" target="_blank">Radarr</a></li>
-                    <li class="nav-item" title="Sonarr"><a class="nav-link" href="https://sonarr.home.ericoc.com/" target="_blank">Sonarr</a></li>
-                </ul>
-            </nav>
-            <nav class="col navbar navbar-expand-lg">
-                <ul class="navbar-nav nav-underline">
-                    <li class="nav-item" title="qBittorrent"><a class="nav-link" href="https://qb.gaw.sh/" target="_blank">qBittorrent</a></li>
-                    <li class="nav-item" title="vueTorrent"><a class="nav-link" href="https://gaw.sh/" target="_blank">vueTorrent</a></li>
-                </ul>
+
+                <button class="m-1 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle Navigation">
+                    <span class="m-1 navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav nav-underline">
+                        <li class="nav-item dropdown">
+                            <a class="bi bi-menu-button nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" id="categoryList">
+                            </ul>
+                            <script id="categoryJSON" type="application/json">{{ categories | tojson }}</script>
+                            <script>
+                                const categoryData = JSON.parse(document.getElementById("categoryJSON").textContent);
+                                for (const [category, count] of Object.entries(categoryData)) {
+                                    const liElement = document.createElement("li");
+                                    liElement.className = "nav-item";
+                                    const aElement = fmtCategory(category, true);
+                                    aElement.classList.add("dropdown-item");
+                                    aElement.classList.add("nav-link");
+                                    aElement.innerText += ` (${count})`;
+                                    liElement.appendChild(aElement);
+                                    aElement.title = liElement.title = `${category} (${count})`;
+                                    document.getElementById("categoryList").appendChild(liElement);
+                                };
+                            </script>
+                        </li>
+                        <li class="nav-item" title="Plex">
+                            <a class="bi bi-display nav-link" href="https://plex.home.ericoc.com/" target="_blank">
+                                Plex
+                            </a>
+                        </li>
+                        <li class="nav-item" title="Prowlarr">
+                            <a class="bi bi-search nav-link" href="https://prowlarr.home.ericoc.com/" target="_blank">
+                                Prowlarr</a>
+                        </li>
+                        <li class="nav-item" title="Radarr">
+                            <a class="bi bi-film nav-link" href="https://radarr.home.ericoc.com/" target="_blank">
+                                Radarr
+                            </a>
+                        </li>
+                        <li class="nav-item" title="Sonarr">
+                            <a class="bi bi-tv nav-link" href="https://sonarr.home.ericoc.com/" target="_blank">
+                                Sonarr
+                            </a>
+                        </li>
+                        <li class="nav-item" title="qBittorrent">
+                            <a class="bi bi-box-arrow-up-right nav-link" href="https://qb.gaw.sh/" target="_blank">
+                                qBittorrent
+                            </a>
+                        </li>
+                        <li class="nav-item" title="vueTorrent">
+                            <a class="bi bi-folder-symlink nav-link" href="https://gaw.sh/" target="_blank">
+                                vueTorrent
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </header>
         <main>
