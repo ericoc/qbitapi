@@ -1,13 +1,10 @@
 {% extends "base.html.j2" %}
-{% block title %}{{ title | default('Unknown Error') }}{% endblock title %}
-{% block header %}{{ title | default('Unknown Error') }}{% endblock header %}
+{%- block title %}{{ title }}{% endblock %}
 {%- block content %}
-    <div class="m-3 p-3">
-        <p class="flash-error fw-bold">
-            {{ message | default('Sorry, but there was an unknown error!') }}
-        </p>
-        <p class="lead">
-            You may want to return to the <a href="{{ url_for('index') }}">main page</a>.
-        </p>
-    </div>
+                <p class="flash-error fw-bold lead">
+                    {{ message }}
+                </p>
+                <p class="lead">
+                    You may want to return to the <a href="{{ url_for('index') }}" title="main page">main page</a>.
+                </p>
 {%- endblock content %}

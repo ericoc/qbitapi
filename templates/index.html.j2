@@ -1,36 +1,33 @@
 {% extends "base.html.j2" %}
 {%- block scripts %}
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        <script src="{{ url_for('static', filename='tbl.js') }}"></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
         <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
         <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
-    {%- endif %}
+        <script src="{{ url_for('static', filename='tbl.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
-    <div class="container-fluid">
-    {%- if torrents is defined and torrents is iterable and torrents | length > 0 %}
-        <table class="table table-dark table-sm table-striped w-100" id="torrentsTable"></table>
-        <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
-        <script>
-            const torrentData = JSON.parse(document.getElementById("torrents").textContent);
-            torrentData.forEach(buildTorrent);
-            const pageTable = new DataTable(
-                "#torrentsTable", {
-                    columns: columns,
-                    data: torrents,
-                    lengthMenu: [
-                        [5, 10, 15, 20, 25, 50, 75, 100, -1],
-                        [5, 10, 15, 20, 25, 50, 75, 100, "all"]
-                    ],
-                    order: [[6, "desc"],],
-                    pageLength: 15
-                }
-            );
-        </script>
-    {%- else %}
-        <h3 title="No torrents found.">No torrents found.</h3>
-    {%- endif %}
-    </div>
+                <table class="table table-sm table-striped w-100" id="torrentsTable"></table>
+                <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
+                <script>
+                    const torrentData = JSON.parse(document.getElementById("torrents").textContent);
+                    torrentData.forEach(buildTorrent);
+                    const pageTable = new DataTable(
+                        "#torrentsTable", {
+                            columns: columns,
+                            data: torrents,
+                            lengthMenu: [
+                                [5, 10, 15, 20, 25, 50, 75, 100, -1],
+                                [5, 10, 15, 20, 25, 50, 75, 100, "all"]
+                            ],
+                            order: [[6, "desc"],],
+                            pageLength: 15
+                        }
+                    );
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const searchKeyword = urlParams.get('search');
+                    if (searchKeyword) {
+                        pageTable.search(searchKeyword);
+                        pageTable.draw();
+                    };
+                </script>
 {%- endblock content %}

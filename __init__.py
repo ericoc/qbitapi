@@ -2,11 +2,11 @@
 """qbitapi."""
 
 import logging
-import os
 
-from flask import abort, Flask, flash, g, redirect, render_template, url_for, \
-    send_from_directory
-import qbittorrentapi
+from flask import Flask, g, make_response, redirect, render_template, \
+    send_from_directory, url_for
+from pathlib import Path
+from qbittorrentapi import Client as QBitClient
 
 
 # Logging.
@@ -19,91 +19,92 @@ app = Flask(__name__)
 app.config.from_pyfile("config.py")
 
 
-@app.before_request
-def pre():
-    """Before request."""
-    g.qbit = _qbc()
-
-
-@app.context_processor
-def injects():
-    """Template variables."""
-    return {}
-
-
-def _qbc(
-    host=app.config["QBIT_HOST"], port=app.config["QBIT_PORT"],
-    username=app.config["QBIT_USERNAME"],
-    password=app.config["QBIT_PASSWORD"]
-):
-    """Connect and log in to qBittorrent API"""
-    client = qbittorrentapi.Client(
-        host=host,
-        port=port,
-        username=username,
-        password=password,
-        VERIFY_WEBUI_CERTIFICATE=True,
-        FORCE_SCHEME_FROM_HOST=True,
-        SIMPLE_RESPONSES=True
+def qbc(credentials=app.config.get("QBIT")):
+    """Connect and log in to qBittorrent API."""
+    client = QBitClient(
+        host=credentials.get("host", "localhost"),
+        port=credentials.get("port", 80),
+        username=credentials.get("username", "admin"),
+        password=credentials.get("password", "adminadmin"),
+        VERIFY_WEBUI_CERTIFICATE=credentials.get("verify", False),
+        FORCE_SCHEME_FROM_HOST=credentials.get("force_scheme", False),
+        SIMPLE_RESPONSES=credentials.get("simple", True)
     )
     client.auth_log_in()
     return client
 
 
+@app.context_processor
+def injects():
+    """Context processor."""
+    return {
+        "categories": g.categories,
+        "torrents": g.torrents
+    }
+
+
+@app.before_request
+def pre():
+    """Before request."""
+    qbit = qbc()
+    g.torrents = qbit.torrents_info()
+    g.categories = {}
+    if g.torrents:
+        for torrent in g.torrents:
+            category = torrent.get("category")
+            if category:
+                if category not in g.categories:
+                    g.categories[category] = 0
+                g.categories[category] += 1
+
+
 @app.route("/", methods=["GET"])
-def index(torrents=None):
-    """List torrents."""
-    if torrents is None:
-        torrents = g.qbit.torrents_info()
-
-    if not torrents:
-        flash("Sorry, but no torrents were found!", "error")
-        abort(404)
-
-    return render_template("index.html.j2", torrents=torrents)
+def index():
+    if not g.torrents:
+        return error(
+            title="No Torrents Found.",
+            message="Sorry, but no torrents could be found.",
+            code=404
+        )
+    return render_template("index.html.j2")
 
 
-@app.route("/category/<path:category>/", methods=["GET"])
-@app.route("/category/<path:category>", methods=["GET"])
-def search_category(category=None):
-    """List categorized torrents."""
-    if not category:
-        return redirect(url_for("index"))
-    return index(torrents=g.qbit.torrents_info(category=category))
+@app.route("/search/<path:keyword>/", methods=["GET"])
+def search(keyword):
+    return redirect("%s?search=%s" % (url_for("index"), keyword))
 
 
-def _error(
-        title="Unknown Error",
-        message="Sorry, but there was an unknown error.",
-        code=500
-):
-    """Error template."""
-    return render_template("error.html.j2", title=title, message=message), code
+def error(title=None, message=None, code=500):
+    return make_response(
+        render_template(
+            "error.html.j2",
+            title=title or "Unknown Error",
+            message=message or "Sorry, but there was an unknown error.",
+            torrents=g.torrents,
+            categories=g.categories
+        ), code
+    )
 
 
 @app.errorhandler(400)
-def _bad_request(message):
-    """Error codes to template above."""
-    return _error(title="Bad Request", message=message, code=400)
+def bad_request(message):
+    return error(title="Bad Request", message=message, code=400)
 
 
 @app.errorhandler(404)
-def _page_not_found(message):
-    """Error codes to template above."""
-    return _error(title="Page Not Found", message=message, code=404)
+def page_not_found(message):
+    return error(title="Page Not Found", message=message, code=404)
 
 
 @app.errorhandler(500)
-def _internal_server_error(message):
-    """Error codes to template above."""
-    return _error(title="Internal Server Error", message=message, code=500)
+def internal_server_error(message):
+    return error(title="Internal Server Error", message=message, code=500)
 
 
 @app.route("/favicon.ico")
-def _favicon():
-    """Serve favicon.ico from static content."""
+def favicon():
     return send_from_directory(
-        os.path.join(app.root_path, "static"),
+        Path(app.root_path, "static"),
         mimetype="image/vnd.microsoft.icon",
         path="favicon.ico"
     )

@@ -1,22 +1,28 @@
-'''config.py'''
+"""config.py"""
 
+QBIT = {
+    "host": "https://example.com/",
+    "port": "443",
+    "username": "admin",
+    "password": "adminadmin",
+    "verify": True,
+    "force_scheme": True,
+    "simple": True
+}
 
-QBIT_HOST = 'http://127.0.0.1'
-QBIT_PORT = 8080
-QBIT_USERNAME = 'admin'
-QBIT_PASSWORD = 'adminadmin'
+TIMEZONE = "America/New_York"
 
 TESTING = True
 DEBUG = True
-SECRET_KEY = 'SECRET'
+SECRET_KEY = "SECRET"
 
-REMEMBER_COOKIE_DOMAIN = '127.0.0.1'
+REMEMBER_COOKIE_DOMAIN = "127.0.0.1"
 REMEMBER_COOKIE_DURATION = 604800
 REMEMBER_COOKIE_HTTPONLY = True
-#REMEMBER_COOKIE_SECURE = True
+REMEMBER_COOKIE_SECURE = True
 
 SESSION_COOKIE_HTTPONLY = True
-#SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
-#SESSION_PROTECTION = 'strong'
-#USE_SESSION_FOR_NEXT = True
+SESSION_PROTECTION = "strong"
+USE_SESSION_FOR_NEXT = True

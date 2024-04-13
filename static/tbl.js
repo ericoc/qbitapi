@@ -11,29 +11,19 @@ function fmtAdded (added, type) {
             minute: "2-digit"
         }
     );
-    if (type == "display") {
+    if (type === "display") {
         return `<time class="small" datetime="${date.toISOString()}" title="${date.toString()}">${when}</time>`;
     };
     return when;
 };
 
-// Category.
-function fmtCategory (category) {
-    let categoryIcon = "question";
-    if (category == "software") {
-        categoryIcon = "code-slash";
-    } else if (category.startsWith("radarr")) {
-        categoryIcon = "film";
-    } else if (category.startsWith("sonarr")) {
-        categoryIcon = "tv";
-    };
-    return `<a class="bi bi-${categoryIcon}" title="${category}" href="/category/${category}"></a>`;
-};
-
 // Name.
 function fmtName (name) {
-    return `<small title="${name}">${name}</small>`;
-}
+    const nameElement = document.createElement("small");
+    nameElement.title = name;
+    nameElement.appendChild(document.createTextNode(name));
+    return nameElement;
+};
 
 // Ratio.
 function fmtRatio (ratio) {
@@ -45,8 +35,11 @@ function fmtRatio (ratio) {
     } else if (ratio >= 0.25) {
         ratioClass = "low";
     };
-    const rounded = Number(ratio.toFixed(3));
-    return `<b class="ratio-${ratioClass}" title="${ratio}">${rounded}</b>`;
+    const ratioElement = document.createElement("b");
+    ratioElement.className = `ratio-${ratioClass}`;
+    ratioElement.innerText = `${Number(ratio.toFixed(3))}`;
+    ratioElement.title = ratio;
+    return ratioElement;
 };
 
 // State.
@@ -151,4 +144,6 @@ const columns= [
 ];
 
 const torrents = [];
-function buildTorrent(torrent) { torrents.push(torrent); };
+function buildTorrent(torrent) {
+    torrents.push(torrent);
+};
