@@ -1,0 +1,18 @@
+[Unit]
+Description=qbitapi gunicorn daemon
+Requires=qbitapi.socket
+After=network.target
+
+[Service]
+Type=notify
+User=qbittorrent
+Group=qbittorrent
+WorkingDirectory=/var/lib/qbittorrent/qbitapi
+ExecStart=/var/lib/qbittorrent/qbitapi/venv/bin/gunicorn --config /var/lib/qbittorrent/qbitapi/gunicorn_configuration.py __init__:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
