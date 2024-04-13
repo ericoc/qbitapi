@@ -79,9 +79,7 @@ def error(title=None, message=None, code=500):
         render_template(
             "error.html.j2",
             title=title or "Unknown Error",
-            message=message or "Sorry, but there was an unknown error.",
-            torrents=g.torrents,
-            categories=g.categories
+            message=message or "Sorry, but there was an unknown error."
         ), code
     )
 

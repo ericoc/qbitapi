@@ -37,7 +37,7 @@ function fmtRatio (ratio) {
     };
     const ratioElement = document.createElement("b");
     ratioElement.className = `ratio-${ratioClass}`;
-    ratioElement.innerText = `${Number(ratio.toFixed(3))}`;
+    ratioElement.innerText = Number(ratio.toFixed(3)).toString();
     ratioElement.title = ratio;
     return ratioElement;
 };

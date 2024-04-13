@@ -17,12 +17,16 @@
             // Category.
             function fmtCategory (category, text=false) {
                 let categoryIcon = "question";
-                if (category === "software") {
-                    categoryIcon = "code-slash";
-                } else if (category.startsWith("radarr")) {
-                    categoryIcon = "film";
-                } else if (category.startsWith("sonarr")) {
-                    categoryIcon = "tv";
+                const categoryIcons = {
+                    "prowlarr": "search",
+                    "radarr": "film",
+                    "software": "code-slash",
+                    "sonarr": "tv"
+                };
+                for (const [itemName, itemIcon] of Object.entries(categoryIcons)) {
+                    if (category.startsWith(itemName)) {
+                        categoryIcon = itemIcon;
+                    };
                 };
                 const link = document.createElement("a");
                 link.className = `bi bi-${categoryIcon}`;
