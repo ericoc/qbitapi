@@ -7,11 +7,14 @@
         <script src="https://cdn.datatables.net/responsive/3.0.1/js/dataTables.responsive.js"></script>
         <script src="https://cdn.datatables.net/responsive/3.0.1/js/responsive.bootstrap5.js"></script>
         <script src="{{ url_for('static', filename='tbl.js') }}"></script>
+        <script src="{{ url_for('static', filename='col.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
                 <table class="display nowrap table table-sm table-striped" id="torrentsTable" style="width: 100%;"></table>
                 <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
                 <script>
+                    const torrents = [];
+                    function buildTorrent(torrent) { torrents.push(torrent); };
                     const torrentData = JSON.parse(document.getElementById("torrents").textContent);
                     torrentData.forEach(buildTorrent);
                     const pageTable = new DataTable(

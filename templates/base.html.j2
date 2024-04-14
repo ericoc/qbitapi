@@ -14,13 +14,14 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script>
-            // Category.
+            // Category names to Bootstrap icons.
             const categoryIcons = {
                 "prowlarr": "search",
                 "radarr": "film",
                 "software": "code-slash",
                 "sonarr": "tv"
             };
+            // Format category names.
             function fmtCategory (category, text=false, icons=categoryIcons) {
                 let categoryIcon = "question";
                 for (const [itemName, itemIcon] of Object.entries(icons)) {
@@ -32,11 +33,13 @@
                 link.className = `bi bi-${categoryIcon}`;
                 link.href = `{{ url_for('index') }}?search=${category}`;
                 link.title = category;
+                // Text inclusive HTML objects for navigation.
                 if (text === true) {
                     link.appendChild(document.createTextNode(` ${category}`));
                     return link;
                 };
-                return `<a class="${link.className}" href="${link.toString()}" title="${link.title}"></a>`;
+                // Alternatively, string for table display.
+                return `<a class="${link.className}" href="${link.href}" title="${link.title}"></a>`;
             };
         </script>
         {%- block scripts %}
@@ -57,11 +60,9 @@
                 <a href="{{ url_for('index') }}">
                     <img alt="qBitAPI" class="navbar-brand" id="logo" src="{{ url_for('static', filename='icon.png') }}" title="qBitAPI">
                 </a>
-
                 <button class="m-1 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle Navigation">
                     <span class="m-1 navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav nav-underline">
                         <li class="nav-item dropdown">
@@ -72,6 +73,7 @@
                             </ul>
                             <script id="categoryJSON" type="application/json">{{ categories | tojson }}</script>
                             <script>
+                                // Navigation links for each category.
                                 const categoryData = JSON.parse(document.getElementById("categoryJSON").textContent);
                                 for (const [category, count] of Object.entries(categoryData)) {
                                     const liElement = document.createElement("li");
@@ -81,7 +83,7 @@
                                     aElement.classList.add("nav-link");
                                     aElement.innerText += ` (${count})`;
                                     liElement.appendChild(aElement);
-                                    liElement.title = `${category} (${count})`;
+                                    aElement.title = liElement.title = `${category} (${count})`;
                                     document.getElementById("categoryList").appendChild(liElement);
                                 };
                             </script>
