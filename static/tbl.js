@@ -19,10 +19,7 @@ function fmtAdded (added, type) {
 
 // Name.
 function fmtName (name) {
-    const nameElement = document.createElement("small");
-    nameElement.title = name;
-    nameElement.appendChild(document.createTextNode(name));
-    return nameElement;
+    return `<small title="${name}">${name}</small>`;
 };
 
 // Ratio.
@@ -35,11 +32,7 @@ function fmtRatio (ratio) {
     } else if (ratio >= 0.25) {
         ratioClass = "low";
     };
-    const ratioElement = document.createElement("b");
-    ratioElement.className = `ratio-${ratioClass}`;
-    ratioElement.innerText = Number(ratio.toFixed(3)).toString();
-    ratioElement.title = ratio;
-    return ratioElement;
+    return `<b class="ratio-${ratioClass}" title="${ratio}">${Number(ratio.toFixed(3)).toString()}</b>`;
 };
 
 // State.
@@ -51,7 +44,7 @@ function fmtState (state){
     } else if (state.endsWith("UP")) {
         stateClass = "success";
         stateIcon = "arrow-up";
-    } else if (state.endsWith("DOWN")) {
+    } else if (state.endsWith("DOWN") || state.endsWith("DL")) {
         stateClass = "info"
         stateIcon = "arrow-down";
     };
@@ -92,14 +85,6 @@ const columns= [
         type: "text"
     },
     {
-        data: "hash",
-        searchable: false,
-        sortable: false,
-        title: "Hash",
-        type: "text",
-        visible: false
-    },
-    {
         data: "state",
         render: function (data, type) {
             return type === "display" ? fmtState(data) : data;
@@ -107,6 +92,14 @@ const columns= [
         searchable: false,
         title: "State",
         type: "text"
+    },
+    {
+        data: "hash",
+        searchable: false,
+        sortable: false,
+        title: "Hash",
+        type: "text",
+        visible: false
     },
     {
         data: "category",

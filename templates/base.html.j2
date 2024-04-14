@@ -15,15 +15,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script>
             // Category.
-            function fmtCategory (category, text=false) {
+            const categoryIcons = {
+                "prowlarr": "search",
+                "radarr": "film",
+                "software": "code-slash",
+                "sonarr": "tv"
+            };
+            function fmtCategory (category, text=false, icons=categoryIcons) {
                 let categoryIcon = "question";
-                const categoryIcons = {
-                    "prowlarr": "search",
-                    "radarr": "film",
-                    "software": "code-slash",
-                    "sonarr": "tv"
-                };
-                for (const [itemName, itemIcon] of Object.entries(categoryIcons)) {
+                for (const [itemName, itemIcon] of Object.entries(icons)) {
                     if (category.startsWith(itemName)) {
                         categoryIcon = itemIcon;
                     };
@@ -32,8 +32,11 @@
                 link.className = `bi bi-${categoryIcon}`;
                 link.href = `{{ url_for('index') }}?search=${category}`;
                 link.title = category;
-                if (text === true) { link.appendChild(document.createTextNode(` ${category}`)); };
-                return link;
+                if (text === true) {
+                    link.appendChild(document.createTextNode(` ${category}`));
+                    return link;
+                };
+                return `<a class="${link.className}" href="${link.toString()}" title="${link.title}"></a>`;
             };
         </script>
         {%- block scripts %}
@@ -78,7 +81,7 @@
                                     aElement.classList.add("nav-link");
                                     aElement.innerText += ` (${count})`;
                                     liElement.appendChild(aElement);
-                                    aElement.title = liElement.title = `${category} (${count})`;
+                                    liElement.title = `${category} (${count})`;
                                     document.getElementById("categoryList").appendChild(liElement);
                                 };
                             </script>

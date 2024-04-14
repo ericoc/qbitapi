@@ -1,12 +1,15 @@
 {% extends "base.html.j2" %}
 {%- block scripts %}
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.1/css/responsive.bootstrap5.css">
         <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
         <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.1/js/dataTables.responsive.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.1/js/responsive.bootstrap5.js"></script>
         <script src="{{ url_for('static', filename='tbl.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
-                <table class="table table-sm table-striped w-100" id="torrentsTable"></table>
+                <table class="display nowrap table table-sm table-striped" id="torrentsTable" style="width: 100%;"></table>
                 <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
                 <script>
                     const torrentData = JSON.parse(document.getElementById("torrents").textContent);
@@ -20,7 +23,8 @@
                                 [5, 10, 15, 20, 25, 50, 75, 100, "all"]
                             ],
                             order: [[6, "desc"],],
-                            pageLength: 15
+                            pageLength: 15,
+                            responsive: { responsive: true }
                         }
                     );
                     const urlParams = new URLSearchParams(window.location.search);
