@@ -1,4 +1,46 @@
-/* Column format functions. */
+/* Column formatting. */
+
+// Category names to Bootstrap icons.
+const categoryIcons = {
+    "prowlarr": "search",
+    "radarr": "film",
+    "software": "code-slash",
+    "sonarr": "tv"
+};
+
+// Perform search.
+async function doSearch (keyword=null) {
+    if (keyword) {
+        pageTable.search(keyword);
+        pageTable.draw();
+        return true;
+    };
+    return false;
+};
+
+// Format category names.
+function fmtCategory (category="unknown", text=false, icons=categoryIcons) {
+    let categoryIcon = "question";
+    if (category) {
+        for (const [itemName, itemIcon] of Object.entries(icons)) {
+            if (category.startsWith(itemName)) {
+                categoryIcon = itemIcon;
+            };
+        };
+    };
+    const link = document.createElement("a");
+    link.className = `bi bi-${categoryIcon}`;
+    link.href = `#${category}`;
+    link.onclick = () => { return doSearch(category); };
+    link.title = category;
+    // Text inclusive HTML objects for navigation.
+    if (text === true) {
+        link.appendChild(document.createTextNode(` ${category}`));
+        return link;
+    };
+    // Alternatively, string for table display.
+    return `<a class="${link.className}" href="${link.href}" onClick="doSearch('${category}');" title="${link.title}"></a>`;
+};
 
 // Added date and time.
 function fmtAdded (added, type) {

@@ -13,47 +13,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        <script>
-            // Category names to Bootstrap icons.
-            const categoryIcons = {
-                "prowlarr": "search",
-                "radarr": "film",
-                "software": "code-slash",
-                "sonarr": "tv"
-            };
-            // Perform search.
-            function doSearch (keyword=null) {
-                if (keyword) {
-                    pageTable.search(keyword);
-                    pageTable.draw();
-                    return true;
-                };
-                return false;
-            };
-            // Format category names.
-            function fmtCategory (category="unknown", text=false, icons=categoryIcons) {
-                let categoryIcon = "question";
-                if (category) {
-                    for (const [itemName, itemIcon] of Object.entries(icons)) {
-                        if (category.startsWith(itemName)) {
-                            categoryIcon = itemIcon;
-                        };
-                    };
-                };
-                const link = document.createElement("a");
-                link.className = `bi bi-${categoryIcon}`;
-                link.href = `{{ url_for('index') }}#${category}`;
-                link.onclick = () => { return doSearch(category); };
-                link.title = category;
-                // Text inclusive HTML objects for navigation.
-                if (text === true) {
-                    link.appendChild(document.createTextNode(` ${category}`));
-                    return link;
-                };
-                // Alternatively, string for table display.
-                return `<a class="${link.className}" href="${link.href}" onclick="doSearch('${category}');" title="${link.title}"></a>`;
-            };
-        </script>
+        <script src="{{ url_for('static', filename='fmt.js') }}"></script>
         {%- block scripts %}
         {%- endblock scripts %}
         <style>
@@ -76,7 +36,7 @@
                     <span class="m-1 navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav nav-underline">
+                    <ul class="navbar-nav nav-underline" id="navList">
                         <li class="nav-item dropdown">
                             <a class="bi bi-menu-button nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Categories
@@ -85,25 +45,6 @@
                             </ul>
                             <script id="categoryJSON" type="application/json">{{ categories | tojson }}</script>
                             <script src="{{ url_for('static', filename='nav.js') }}"></script>
-                        </li>
-                        <li class="nav-item" title="Plex">
-                            <a class="bi bi-display nav-link" href="https://plex.home.ericoc.com/" target="_blank">
-                                Plex
-                            </a>
-                        </li>
-                        <li class="nav-item" title="Prowlarr">
-                            <a class="bi bi-search nav-link" href="https://prowlarr.home.ericoc.com/" target="_blank">
-                                Prowlarr</a>
-                        </li>
-                        <li class="nav-item" title="Radarr">
-                            <a class="bi bi-film nav-link" href="https://radarr.home.ericoc.com/" target="_blank">
-                                Radarr
-                            </a>
-                        </li>
-                        <li class="nav-item" title="Sonarr">
-                            <a class="bi bi-tv nav-link" href="https://sonarr.home.ericoc.com/" target="_blank">
-                                Sonarr
-                            </a>
                         </li>
                         <li class="nav-item" title="qBittorrent">
                             <a class="bi bi-box-arrow-up-right nav-link" href="https://qb.gaw.sh/" target="_blank">
@@ -132,7 +73,7 @@
             <div class="container-fluid">
 {%- block content %}
 {%- endblock content %}
-            <script>buildCategoryNav();</script>
+                <script>buildNavigation();</script>
             </div>
         </main>
     </body>
