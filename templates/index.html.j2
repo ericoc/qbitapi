@@ -1,35 +1,18 @@
 {% extends "base.html.j2" %}
 {%- block scripts %}
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+        <link rel="dns-prefetch" href="https://cdn.datatables.net/">
+        <link rel="preconnect" href="https://cdn.datatables.net/">
         <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-html5-3.0.1/b-print-3.0.1/date-1.5.2/r-3.0.1/sb-1.7.0/sp-2.3.0/sl-2.0.0/sr-1.4.0/datatables.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-html5-3.0.1/b-print-3.0.1/date-1.5.2/r-3.0.1/sb-1.7.0/sp-2.3.0/sl-2.0.0/sr-1.4.0/datatables.min.js"></script>
-        <script src="{{ url_for('static', filename='tbl.js') }}"></script>
+        <script src="{{ url_for('static', filename='fmt.js') }}"></script>
         <script src="{{ url_for('static', filename='col.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
                 <table class="display nowrap table table-sm table-striped" id="torrentsTable" style="width: 100%;"></table>
                 <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
-                <script>
-                    const torrents = [];
-                    function buildTorrent(torrent) { torrents.push(torrent); };
-                    const torrentData = JSON.parse(document.getElementById("torrents").textContent);
-                    torrentData.forEach(buildTorrent);
-                    const pageTable = new DataTable(
-                        "#torrentsTable", {
-                            columns: columns,
-                            buttons: ["copy", "excel", "pdf"],
-                            data: torrents,
-                            lengthMenu: [
-                                [5, 10, 15, 20, 25, 50, 75, 100, -1],
-                                [5, 10, 15, 20, 25, 50, 75, 100, "all"]
-                            ],
-                            order: [[6, "desc"],],
-                            pageLength: 15,
-                            responsive: { responsive: true }
-                        }
-                    );
-                    const searchKeyword = window.location.hash.substring(1);
-                    if (searchKeyword) { doSearch(searchKeyword); };
-                </script>
+                <script src="{{ url_for('static', filename='tbl.js') }}"></script>
 {%- endblock content %}
