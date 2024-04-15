@@ -71,7 +71,7 @@ def index():
 
 @app.route("/search/<path:keyword>/", methods=["GET"])
 def search(keyword):
-    return redirect("%s?search=%s" % (url_for("index"), keyword))
+    return redirect("%s#%s" % (url_for("index"), keyword))
 
 
 def error(title=None, message=None, code=500):

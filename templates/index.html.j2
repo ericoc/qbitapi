@@ -30,11 +30,7 @@
                             responsive: { responsive: true }
                         }
                     );
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const searchKeyword = urlParams.get('search');
-                    if (searchKeyword) {
-                        pageTable.search(searchKeyword);
-                        pageTable.draw();
-                    };
+                    const searchKeyword = window.location.hash.substring(1);
+                    if (searchKeyword) { doSearch(keyword=searchKeyword); };
                 </script>
 {%- endblock content %}

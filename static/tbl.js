@@ -24,6 +24,11 @@ function fmtName (name) {
     return `<small title="${name}">${name}</small>`;
 };
 
+// Code (path).
+function fmtCode (data) {
+    return `<code title="${data}">${data}</code>`;
+};
+
 // Ratio.
 function fmtRatio (ratio) {
     let ratioClass = "verylow";
@@ -73,5 +78,5 @@ function fmtSize (bytes, si=false, dp=1) {
     } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
 
     const out = bytes.toFixed(dp) + ' ' + units[u];
-    return `<code title="${out}">${out}</code>`;
+    return fmtCode(out);
 };

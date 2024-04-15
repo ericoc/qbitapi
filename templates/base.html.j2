@@ -21,17 +21,28 @@
                 "software": "code-slash",
                 "sonarr": "tv"
             };
+            // Perform search.
+            function doSearch (keyword=null) {
+                if (keyword) {
+                    pageTable.search(keyword);
+                    pageTable.draw();
+                };
+                return false;
+            };
             // Format category names.
-            function fmtCategory (category, text=false, icons=categoryIcons) {
+            function fmtCategory (category="unknown", text=false, icons=categoryIcons) {
                 let categoryIcon = "question";
-                for (const [itemName, itemIcon] of Object.entries(icons)) {
-                    if (category.startsWith(itemName)) {
-                        categoryIcon = itemIcon;
+                if (category) {
+                    for (const [itemName, itemIcon] of Object.entries(icons)) {
+                        if (category.startsWith(itemName)) {
+                            categoryIcon = itemIcon;
+                        };
                     };
                 };
                 const link = document.createElement("a");
                 link.className = `bi bi-${categoryIcon}`;
-                link.href = `{{ url_for('index') }}?search=${category}`;
+                link.href = `#${category}`;
+                link.onclick = function () { doSearch(category); return false; };
                 link.title = category;
                 // Text inclusive HTML objects for navigation.
                 if (text === true) {
@@ -39,7 +50,7 @@
                     return link;
                 };
                 // Alternatively, string for table display.
-                return `<a class="${link.className}" href="${link.href}" title="${link.title}"></a>`;
+                return `<a class="${link.className}" href="${link.href}" onclick="doSearch('${category}');" title="${link.title}"></a>`;
             };
         </script>
         {%- block scripts %}
