@@ -26,6 +26,7 @@
                 if (keyword) {
                     pageTable.search(keyword);
                     pageTable.draw();
+                    return true;
                 };
                 return false;
             };
@@ -41,8 +42,8 @@
                 };
                 const link = document.createElement("a");
                 link.className = `bi bi-${categoryIcon}`;
-                link.href = `#${category}`;
-                link.onclick = function () { doSearch(category); return false; };
+                link.href = `{{ url_for('index') }}#${category}`;
+                link.onclick = () => { return doSearch(category); };
                 link.title = category;
                 // Text inclusive HTML objects for navigation.
                 if (text === true) {
@@ -83,21 +84,7 @@
                             <ul class="dropdown-menu" id="categoryList">
                             </ul>
                             <script id="categoryJSON" type="application/json">{{ categories | tojson }}</script>
-                            <script>
-                                // Navigation links for each category.
-                                const categoryData = JSON.parse(document.getElementById("categoryJSON").textContent);
-                                for (const [category, count] of Object.entries(categoryData)) {
-                                    const liElement = document.createElement("li");
-                                    liElement.className = "nav-item";
-                                    const aElement = fmtCategory(category, true);
-                                    aElement.classList.add("dropdown-item");
-                                    aElement.classList.add("nav-link");
-                                    aElement.innerText += ` (${count})`;
-                                    liElement.appendChild(aElement);
-                                    aElement.title = liElement.title = `${category} (${count})`;
-                                    document.getElementById("categoryList").appendChild(liElement);
-                                };
-                            </script>
+                            <script src="{{ url_for('static', filename='nav.js') }}"></script>
                         </li>
                         <li class="nav-item" title="Plex">
                             <a class="bi bi-display nav-link" href="https://plex.home.ericoc.com/" target="_blank">
@@ -145,6 +132,7 @@
             <div class="container-fluid">
 {%- block content %}
 {%- endblock content %}
+            <script>buildCategoryNav();</script>
             </div>
         </main>
     </body>
