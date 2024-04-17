@@ -48,9 +48,9 @@ def pre():
 
 
 @app.template_filter("unix2time")
-def unix2time(seconds, timezone=app.config.get("TIMEZONE")):
-    fmt = "%c"
-    return datetime.fromtimestamp(seconds).astimezone(tz=timezone).strftime(fmt)
+def unix2time(seconds, tz=app.config.get("TIMEZONE")):
+    fmt = "%a %d %b %Y @ %I:%M:%S %p %Z"
+    return datetime.fromtimestamp(seconds).astimezone(tz=tz).strftime(fmt)
 
 
 @app.route("/", methods=["GET"])
