@@ -3,8 +3,8 @@
 
 import logging
 
-from flask import Flask, g, make_response, redirect, render_template, \
-    send_from_directory, url_for
+from datetime import datetime
+from flask import Flask, g, make_response, render_template, send_from_directory
 from pathlib import Path
 from qbittorrentapi import Client as QBitClient
 
@@ -37,10 +37,7 @@ def qbc(credentials=app.config.get("QBIT")):
 @app.context_processor
 def injects():
     """Context processor."""
-    return {
-        "categories": g.categories,
-        "torrents": g.torrents
-    }
+    return {"torrents": g.torrents}
 
 
 @app.before_request
@@ -48,14 +45,12 @@ def pre():
     """Before request."""
     qbit = qbc()
     g.torrents = qbit.torrents_info()
-    g.categories = {}
-    if g.torrents:
-        for torrent in g.torrents:
-            category = torrent.get("category")
-            if category:
-                if category not in g.categories:
-                    g.categories[category] = 0
-                g.categories[category] += 1
+
+
+@app.template_filter("unix2time")
+def unix2time(seconds, timezone=app.config.get("TIMEZONE")):
+    fmt = "%c"
+    return datetime.fromtimestamp(seconds).astimezone(tz=timezone).strftime(fmt)
 
 
 @app.route("/", methods=["GET"])
@@ -67,11 +62,6 @@ def index():
             code=404
         )
     return render_template("index.html.j2")
-
-
-@app.route("/search/<path:keyword>/", methods=["GET"])
-def search(keyword):
-    return redirect("%s#%s" % (url_for("index"), keyword))
 
 
 def error(title=None, message=None, code=500):

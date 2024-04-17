@@ -1,11 +1,143 @@
 {% extends "base.html.j2" %}
+{%- macro render_category(category="unknown") %}
+    {%- set category_icons = {
+        "prowlarr": "search",
+        "radarr": "film",
+        "sonarr": "tv",
+        "software": "code-slash"
+    } -%}
+    {%- for category_option, icon_option in category_icons.items() %}
+        {%- if category.startswith(category_option) %}
+                                <span class="bi bi-{{ icon_option }} text-primary"></span>
+                                {{ category }}
+        {%- endif %}
+    {%- endfor %}
+{%- endmacro %}
+{%- macro render_state(state="unknown") %}
+    {%- set state_class = "error" %}
+    {%- set state_icon = "question-circle" %}
+    {%- if state.startswith("stalled") or "stalled" in state %}
+        {%- set state_icon = "pause" %}
+    {%- elif state.endswith("UP") %}
+        {%- set state_class = "success" %}
+        {%- set state_icon = "arrow-up-circle" %}
+    {%- elif state.endswith("DL") or state.endswith("DOWN") %}
+        {%- set state_class = "info" %}
+        {%- set state_icon = "arrow-down-circle" %}
+    {%- endif %}
+                                <span class="bi bi-{{ state_icon }} flash-{{ state_class }}"></span>
+                                {{ state }}
+{%- endmacro %}
+{%- macro render_ratio(ratio=None) %}
+    {%- set ratio_class = "verylow" %}
+    {%- if ratio >= 1  %}
+        {%- set ratio_class = "done"  %}
+    {%- elif ratio >= 0.5 %}
+        {%- set ratio_class = "high"  %}
+    {%- elif ratio >= 0.25 %}
+        {%- set ratio_class = "low"  %}
+    {% endif %}
+                                <span class="fw-bold ratio-{{ ratio_class }}">
+                                    {{ ratio|round(3) }}
+                                </span>
+{%- endmacro %}
 {%- block scripts %}
         <link rel="stylesheet" href="{{ url_for('static', filename='datatables.min.css') }}">
         <script src="{{ url_for('static', filename='datatables.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='col.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
-                <table class="display nowrap table table-sm table-striped" id="torrentsTable" style="width: 100%;"></table>
-                <script id="torrents" type="application/json">{{ torrents | tojson }}</script>
-                <script src="{{ url_for('static', filename='tbl.js') }}"></script>
+                <table class="display nowrap table table-sm table-striped" id="torrents" style="width: 100%;">
+
+                    <thead class="fw-bold">
+                        <tr>
+                            <td title="Name">
+                                Name
+                            </td>
+                            <td title="State">
+                                State
+                            </td>
+                            <td title="Category">
+                                Category
+                            </td>
+                            <td title="Size">
+                                Size
+                            </td>
+                            <td title="Ratio">
+                                Ratio
+                            </td>
+                            <td title="Added">
+                                Added
+                            </td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+    {%- for torrent in torrents %}
+                        <tr>
+                            <td data-search="{{ torrent.name }}" data-order="{{ torrent.name }}" title="{{ torrent.name }}">
+                                <small>{{ torrent.name }}</small>
+                            </td>
+                            <td data-search="{{ torrent.state }}" data-order="{{ torrent.state }}" title="{{ torrent.state }}">
+                                {{- render_state(state=torrent.state) }}
+                            </td>
+                            <td data-search="{{ torrent.category }}" data-order="{{ torrent.category }}" title="{{ torrent.category }}">
+                                {{- render_category(category=torrent.category) }}
+                            </td>
+                            <td data-search="{{ torrent.size }}" data-order="{{ torrent.size }}" title="{{ torrent.size }}">
+                                <code>{{ torrent.size }}</code>
+                            </td>
+                            <td data-search="{{ torrent.ratio }}" data-order="{{ torrent.ratio }}" title="{{ torrent.ratio }}">
+                                {{- render_ratio(torrent.ratio) }}
+                            </td>
+                            <td data-search="{{ torrent.added_on | unix2time }}" data-order="{{ torrent.added_on }}" title="{{ torrent.added_on | unix2time }}">
+                                {{ torrent.added_on | unix2time }}
+                            </td>
+                        </tr>
+    {%- endfor %}
+                    </tbody>
+
+                    <tfoot class="fw-bold">
+                        <tr>
+                            <td title="Name">
+                                Name
+                            </td>
+                            <td title="State">
+                                State
+                            </td>
+                            <td title="Category">
+                                Category
+                            </td>
+                            <td title="Size">
+                                Size
+                            </td>
+                            <td title="Ratio">
+                                Ratio
+                            </td>
+                            <td title="Added">
+                                Added
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>
+                <script>
+                    const table = new DataTable("#torrents",
+                        {
+                            language: {
+                                searchBuilder: {
+                                    add: "+",
+                                    title: '<span class="bi bi-search text-primary"></span> Search'
+                                }
+                            },
+                            layout: { top1: "searchBuilder" },
+                            lengthMenu: [
+                                [5, 10, 15, 20, 25, 50, 75, 100, -1],
+                                [5, 10, 15, 20, 25, 50, 75, 100, "all"]
+                            ],
+                            order: [[5, "desc"],],
+                            pageLength: 10,
+                            responsive: { responsive: true }
+                        }
+                    );
+                </script>
 {%- endblock content %}

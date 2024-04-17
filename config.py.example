@@ -1,4 +1,6 @@
 """config.py"""
+from zoneinfo import ZoneInfo
+
 
 QBIT = {
     "host": "https://example.com/",
@@ -10,7 +12,7 @@ QBIT = {
     "simple": True
 }
 
-TIMEZONE = "America/New_York"
+TIMEZONE = ZoneInfo("America/New_York")
 
 TESTING = True
 DEBUG = True
