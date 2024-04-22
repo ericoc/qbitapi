@@ -111,22 +111,11 @@
                 <script>
                     const table = new DataTable("#torrents",
                         {
-                            dom: "Qfrtip",
-                            language: {
-                                searchBuilder: {
-                                    add: "+",
-                                    title: '<span class="bi bi-search text-primary"></span> Search'
-                                }
-                            },
-                            layout: { top1: "searchBuilder" },
-                            lengthMenu: [
-                                [5, 10, 15, 20, 25, 50, 75, 100, -1],
-                                [5, 10, 15, 20, 25, 50, 75, 100, "all"]
-                            ],
+                            lengthChange: true,
+                            lengthMenu: [5, 10, 15, 20, 25, 50, 75, 100, { label: "all", value: -1}],
                             order: [[5, "desc"],],
-                            pageLength: 10,
+                            pageLength: 15,
                             responsive: { responsive: true },
-                            searchBuilder: { depthLimit: 1 }
                         }
                     );
                 </script>
