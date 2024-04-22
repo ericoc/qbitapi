@@ -1,17 +1,46 @@
 {% extends "base.html.j2" %}
+{%- macro render_table_columns() %}
+                        <tr>
+                            <td title="Name">
+                                Name
+                            </td>
+                            <td title="State">
+                                State
+                            </td>
+                            <td title="Category">
+                                Category
+                            </td>
+                            <td title="Size">
+                                Size
+                            </td>
+                            <td title="Ratio">
+                                Ratio
+                            </td>
+                            <td title="Added">
+                                Added
+                            </td>
+                        </tr>
+{%- endmacro  %}
+{%- macro render_name(name) %}
+                            <td data-search="{{ name }}" data-order="{{ name }}" title="{{ name }}">
+                                <small>{{ name }}</small>
+                            </td>
+{%- endmacro  %}
 {%- macro render_category(category="unknown") %}
-    {%- set category_icons = {
-        "prowlarr": "search",
-        "radarr": "film",
-        "sonarr": "tv",
-        "software": "code-slash"
-    } -%}
-    {%- for category_option, icon_option in category_icons.items() %}
+    {%- for category_option, icon_option in categories.items() %}
         {%- if category.startswith(category_option) %}
+                            <td data-search="{{ category }}" data-order="{{ category }}" title="{{ category }}">
                                 <span class="bi bi-{{ icon_option }} text-primary"></span>
                                 {{ category }}
+                            </td>
         {%- endif %}
     {%- endfor %}
+{%- endmacro %}
+{%- macro render_size(bytes) %}
+    {%- set human = bytes | bytes2human  %}
+                            <td data-search="{{ bytes }}" data-order="{{ bytes }}" title="{{ human }}">
+                                <code>{{ human }}</code>
+                            </td>
 {%- endmacro %}
 {%- macro render_state(state="unknown") %}
     {%- set state_class = "error" %}
@@ -25,10 +54,12 @@
         {%- set state_class = "info" %}
         {%- set state_icon = "arrow-down-circle" %}
     {%- endif %}
+                            <td data-search="{{ state }}" data-order="{{ state }}" title="{{ state }}">
                                 <span class="bi bi-{{ state_icon }} flash-{{ state_class }}"></span>
                                 {{ state }}
+                            </td>
 {%- endmacro %}
-{%- macro render_ratio(ratio=None) %}
+{%- macro render_ratio(ratio) %}
     {%- set ratio_class = "verylow" %}
     {%- if ratio >= 1  %}
         {%- set ratio_class = "done"  %}
@@ -37,92 +68,50 @@
     {%- elif ratio >= 0.25 %}
         {%- set ratio_class = "low"  %}
     {% endif %}
+                            <td data-search="{{ ratio }}" data-order="{{ ratio }}" title="{{ ratio }}">
                                 <span class="fw-bold ratio-{{ ratio_class }}">
                                     {{ ratio|round(3) }}
                                 </span>
+                            </td>
+{%- endmacro %}
+{%- macro render_added(added) %}
+    {%- set human = added | unix2time | strftime %}
+                            <td data-search="{{ human }}" data-order="{{ added }}" title="{{ human }}">
+                                {{ human }}
+                            </td>
+{%- endmacro %}
+{%- macro render_torrent(torrent) %}
+                        <tr>
+                            {{- render_name(name=torrent.name) }}
+                            {{- render_state(state=torrent.state) }}
+                            {{- render_category(category=torrent.category) }}
+                            {{- render_size(bytes=torrent.size) }}
+                            {{- render_ratio(ratio=torrent.ratio) }}
+                            {{- render_added(added=torrent.added_on) }}
+                        </tr>
 {%- endmacro %}
 {%- block scripts %}
         <link rel="stylesheet" href="{{ url_for('static', filename='datatables.min.css') }}">
         <script src="{{ url_for('static', filename='datatables.min.js') }}"></script>
 {%- endblock scripts %}
 {%- block content %}
-                <table class="display nowrap table table-sm table-striped" id="torrents" style="width: 100%;">
-
+                <table class="display nowrap table table-sm table-striped stripe row-border order-column" id="torrents" style="width: 100%;">
                     <thead class="fw-bold">
-                        <tr>
-                            <td title="Name">
-                                Name
-                            </td>
-                            <td title="State">
-                                State
-                            </td>
-                            <td title="Category">
-                                Category
-                            </td>
-                            <td title="Size">
-                                Size
-                            </td>
-                            <td title="Ratio">
-                                Ratio
-                            </td>
-                            <td title="Added">
-                                Added
-                            </td>
-                        </tr>
+                        {{- render_table_columns() }}
                     </thead>
-
                     <tbody>
     {%- for torrent in torrents %}
-                        <tr>
-                            <td data-search="{{ torrent.name }}" data-order="{{ torrent.name }}" title="{{ torrent.name }}">
-                                <small>{{ torrent.name }}</small>
-                            </td>
-                            <td data-search="{{ torrent.state }}" data-order="{{ torrent.state }}" title="{{ torrent.state }}">
-                                {{- render_state(state=torrent.state) }}
-                            </td>
-                            <td data-search="{{ torrent.category }}" data-order="{{ torrent.category }}" title="{{ torrent.category }}">
-                                {{- render_category(category=torrent.category) }}
-                            </td>
-                            <td data-search="{{ torrent.size }}" data-order="{{ torrent.size }}" title="{{ torrent.size }}">
-                                <code>{{ torrent.size }}</code>
-                            </td>
-                            <td data-search="{{ torrent.ratio }}" data-order="{{ torrent.ratio }}" title="{{ torrent.ratio }}">
-                                {{- render_ratio(torrent.ratio) }}
-                            </td>
-                            <td data-search="{{ torrent.added_on | unix2time }}" data-order="{{ torrent.added_on }}" title="{{ torrent.added_on | unix2time }}">
-                                {{ torrent.added_on | unix2time }}
-                            </td>
-                        </tr>
+        {{- render_torrent(torrent) }}
     {%- endfor %}
                     </tbody>
-
                     <tfoot class="fw-bold">
-                        <tr>
-                            <td title="Name">
-                                Name
-                            </td>
-                            <td title="State">
-                                State
-                            </td>
-                            <td title="Category">
-                                Category
-                            </td>
-                            <td title="Size">
-                                Size
-                            </td>
-                            <td title="Ratio">
-                                Ratio
-                            </td>
-                            <td title="Added">
-                                Added
-                            </td>
-                        </tr>
+                        {{- render_table_columns() }}
                     </tfoot>
-
                 </table>
                 <script>
                     const table = new DataTable("#torrents",
                         {
+                            dom: "Qfrtip",
                             language: {
                                 searchBuilder: {
                                     add: "+",
@@ -134,9 +123,10 @@
                                 [5, 10, 15, 20, 25, 50, 75, 100, -1],
                                 [5, 10, 15, 20, 25, 50, 75, 100, "all"]
                             ],
-                            order: [[5, "desc"],],
+                            order: [[6, "desc"],],
                             pageLength: 10,
-                            responsive: { responsive: true }
+                            responsive: { responsive: true },
+                            searchBuilder: { depthLimit: 1 }
                         }
                     );
                 </script>

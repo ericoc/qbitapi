@@ -2,6 +2,13 @@
 from zoneinfo import ZoneInfo
 
 
+CATEGORIES = {
+    "prowlarr": "search",
+    "radarr": "film",
+    "sonarr": "tv",
+    "software": "code-slash"
+}
+
 QBIT = {
     "host": "https://example.com/",
     "port": "443",
