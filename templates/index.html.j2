@@ -35,47 +35,53 @@
         {%- set name_color = "info" %}
         {%- set name_icon = "badge-hd" %}
     {%- elif ".MacOS." in name or " MacOS " in name %}
-        {%- set name_color = "danger-emphasis" %}
+        {%- set name_color = "danger" %}
         {%- set name_icon = "apple" %}
     {%- endif  %}
-                                <small data-bs-toggle="tooltip" data-bs-title="{{ name }}">
+                                <span data-bs-toggle="tooltip" data-bs-title="{{ name }}">
                                     {{ name }}
-                                    <span class="bi bi-{{ name_icon }} text-{{ name_color }}"></span>
-                                </small>
+                                    <span class="bi bi-{{ name_icon }} text-{{ name_color }}-emphasis"></span>
+                                </span>
                             </td>
 {%- endmacro  %}
 {%- macro render_category(category="unknown") %}
+                            <td data-search="{{ category }}" data-order="{{ category }}">
+                                <span data-bs-toggle="tooltip" data-bs-title="{{ category }}">
     {%- for category_option, icon_option in categories.items() %}
         {%- if category.startswith(category_option) %}
-                            <td data-search="{{ category }}" data-order="{{ category }}">
-                                <a class="bi bi-{{ icon_option }} text-primary" data-bs-toggle="tooltip" data-bs-title="{{ category }}" href="#" onClick="table.search('{{ category_option }}').draw();"></a>
+                                <a class="bi bi-{{ icon_option }} text-primary" href="#" onClick="table.search('{{ category_option }}').draw();"></a>
+            {%- if category.endswith("imported") %}
+                                <span class="bi bi-check text-success-emphasis"></span>
+            {%- endif %}
                                 <!-- {{ category }} -->
-                            </td>
         {%- endif %}
     {%- endfor %}
+                                </span>
+                            </td>
 {%- endmacro %}
 {%- macro render_size(bytes) %}
     {%- set human = bytes | bytes2human  %}
                             <td data-search="{{ bytes }}" data-order="{{ bytes }}">
-                                <code data-bs-toggle="tooltip" data-bs-title="{{ human }} ({{ bytes }} bytes)">
+                                <code data-bs-toggle="tooltip" data-bs-title="{{ human }} ({{ bytes | intcomma }} bytes)">
                                     {{ human }}
                                 </code>
                             </td>
 {%- endmacro %}
 {%- macro render_state(state="unknown") %}
-    {%- set state_class = "error" %}
+    {%- set state_color = "danger" %}
     {%- set state_icon = "question-circle" %}
     {%- if state.startswith("stalled") or "stalled" in state %}
+        {%- set state_color = "secondary" %}
         {%- set state_icon = "pause" %}
     {%- elif state.endswith("UP") %}
-        {%- set state_class = "success" %}
+        {%- set state_color = "success" %}
         {%- set state_icon = "arrow-up-circle" %}
     {%- elif state.endswith("DL") or state.endswith("DOWN") %}
-        {%- set state_class = "info" %}
+        {%- set state_color = "info" %}
         {%- set state_icon = "arrow-down-circle" %}
     {%- endif %}
                             <td data-search="{{ state }}" data-order="{{ state }}">
-                                <span class="bi bi-{{ state_icon }} flash-{{ state_class }}" data-bs-toggle="tooltip" data-bs-title="{{ state }}"></span>
+                                <span class="bi bi-{{ state_icon }} text-{{ state_color }}" data-bs-toggle="tooltip" data-bs-title="{{ state }}"></span>
                                 <!-- {{ state }} -->
                             </td>
 {%- endmacro %}

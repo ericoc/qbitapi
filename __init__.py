@@ -51,16 +51,6 @@ def pre():
     g.torrents = qbit.torrents_info()
 
 
-@app.template_filter("strftime")
-def fmt_time(dt, fmt="%a, %b %d, %Y @ %I:%M:%S %p %Z"):
-    return dt.strftime(fmt)
-
-
-@app.template_filter("unix2time")
-def unix2time(seconds, tz=app.config.get("TIMEZONE")):
-    return datetime.fromtimestamp(seconds).astimezone(tz=tz)
-
-
 @app.template_filter("bytes2human")
 def fmt_bytes(num, suffix="B"):
     for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
@@ -70,7 +60,22 @@ def fmt_bytes(num, suffix="B"):
     return f"{num:.1f} Yi{suffix}"
 
 
-@app.route("/", methods=["GET"])
+@app.template_filter("strftime")
+def fmt_time(dt, fmt="%a, %b %d, %Y @ %I:%M:%S %p %Z"):
+    return dt.strftime(fmt)
+
+
+@app.template_filter("intcomma")
+def int_comma(value):
+    return "{:,.0f}".format(value)
+
+
+@app.template_filter("unix2time")
+def unix2time(seconds, tz=app.config.get("TIMEZONE")):
+    return datetime.fromtimestamp(seconds).astimezone(tz=tz)
+
+
+@app.route(rule="/", methods=["GET"])
 def index():
     if not g.torrents:
         return error(
