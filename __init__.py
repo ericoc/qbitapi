@@ -3,7 +3,7 @@
 
 import logging
 
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, g, make_response, render_template, send_from_directory
 from pathlib import Path
 from qbittorrentapi import Client as QBitClient
@@ -36,9 +36,10 @@ def qbc(credentials=app.config.get("QBIT")):
 
 @app.context_processor
 def injects():
-    """Context processor."""
+    """Context processor(s)."""
     return {
         "categories": app.config.get("CATEGORIES"),
+        "now": int(datetime.now(tz=timezone.utc).timestamp()),
         "torrents": g.torrents
     }
 
@@ -51,7 +52,7 @@ def pre():
 
 
 @app.template_filter("strftime")
-def fmt_time(dt, fmt="%a %d %b %Y @ %I:%M:%S %p %Z"):
+def fmt_time(dt, fmt="%a, %b %d, %Y @ %I:%M:%S %p %Z"):
     return dt.strftime(fmt)
 
 

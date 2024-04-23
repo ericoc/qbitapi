@@ -28,48 +28,48 @@
     <body class="m-1 p-1">
         <header class="row container-fluid">
             <nav class="col navbar navbar-expand-lg">
-                <a href="{{ url_for('index') }}">
-                    <img alt="qBitAPI" class="navbar-brand" id="logo" src="{{ url_for('static', filename='icon.png') }}" title="qBitAPI">
+                <a href="{{ url_for('index') }}" data-bs-toggle="tooltip" data-bs-title="qBitAPI">
+                    <img alt="qBitAPI" class="navbar-brand" id="logo" src="{{ url_for('static', filename='icon.png') }}">
                 </a>
                 <button class="m-1 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle Navigation">
                     <span class="m-1 navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav nav-underline">
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-title="Links">
                             <a class="bi bi-menu-button nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Links
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="nav-item" title="Plex">
-                                    <a class="bi bi-display dropdown-item nav-link" href="https://plex.home.ericoc.com/" target="_blank">
+                                <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="Plex">
+                                    <a class="bi bi-collection-play dropdown-item nav-link" href="https://plex.home.ericoc.com/" target="_blank">
                                         Plex
                                     </a>
                                 </li>
-                                <li class="nav-item" title="Prowlarr">
+                                <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="Prowlarr">
                                     <a class="bi bi-search dropdown-item nav-link" href="https://prowlarr.home.ericoc.com/" target="_blank">
                                         Prowlarr
                                     </a>
                                 </li>
-                                <li class="nav-item" title="Radarr">
+                                <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="Radarr">
                                     <a class="bi bi-film dropdown-item nav-link" href="https://radarr.home.ericoc.com/" target="_blank">
                                         Radarr
                                     </a>
                                 </li>
-                                <li class="nav-item" title="Sonarr">
+                                <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="Sonarr">
                                     <a class="bi bi-tv dropdown-item nav-link" href="https://sonarr.home.ericoc.com/" target="_blank">
                                         Sonarr
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item" title="qBittorrent">
-                            <a class="bi bi-box-arrow-up-right nav-link" href="https://qb.gaw.sh/" target="_blank">
+                        <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="qBittorrent">
+                            <a class="bi bi-cloud-download nav-link" href="https://qb.gaw.sh/" target="_blank">
                                 qBittorrent
                             </a>
                         </li>
-                        <li class="nav-item" title="vueTorrent">
-                            <a class="bi bi-folder-symlink nav-link" href="https://gaw.sh/" target="_blank">
+                        <li class="nav-item" data-bs-toggle="tooltip" data-bs-title="vueTorrent">
+                            <a class="bi bi-cloud-arrow-down nav-link" href="https://gaw.sh/" target="_blank">
                                 vueTorrent
                             </a>
                         </li>

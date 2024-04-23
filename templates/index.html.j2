@@ -1,45 +1,49 @@
 {% extends "base.html.j2" %}
 {%- macro render_table_columns() %}
                         <tr>
-                            <td title="Name">
+                            <td data-bs-toggle="tooltip" data-bs-title="Name">
                                 Name
                             </td>
-                            <td title="State">
+                            <td data-bs-toggle="tooltip" data-bs-title="State">
                                 State
                             </td>
-                            <td title="Category">
+                            <td data-bs-toggle="tooltip" data-bs-title="Category">
                                 Category
                             </td>
-                            <td title="Size">
+                            <td data-bs-toggle="tooltip" data-bs-title="Size">
                                 Size
                             </td>
-                            <td title="Ratio">
+                            <td data-bs-toggle="tooltip" data-bs-title="Ratio">
                                 Ratio
                             </td>
-                            <td title="Added">
+                            <td data-bs-toggle="tooltip" data-bs-title="Added">
                                 Added
                             </td>
                         </tr>
 {%- endmacro  %}
 {%- macro render_name(name) %}
-                            <td data-search="{{ name }}" data-order="{{ name }}" title="{{ name }}">
-                                <small>{{ name }}</small>
+                            <td data-search="{{ name }}" data-order="{{ name }}">
+                                <small data-bs-toggle="tooltip" data-bs-title="{{ name }}">
+                                    {{ name }}
+                                </small>
                             </td>
 {%- endmacro  %}
 {%- macro render_category(category="unknown") %}
     {%- for category_option, icon_option in categories.items() %}
         {%- if category.startswith(category_option) %}
-                            <td data-search="{{ category }}" data-order="{{ category }}" title="{{ category }}">
-                                <span class="bi bi-{{ icon_option }} text-primary"></span>
-                                {{ category }}
+                            <td data-search="{{ category }}" data-order="{{ category }}">
+                                <a class="bi bi-{{ icon_option }} text-primary" data-bs-toggle="tooltip" data-bs-title="{{ category }}" href="#" onClick="table.search('{{ category_option }}').draw();"></a>
+                                <!-- {{ category }} -->
                             </td>
         {%- endif %}
     {%- endfor %}
 {%- endmacro %}
 {%- macro render_size(bytes) %}
     {%- set human = bytes | bytes2human  %}
-                            <td data-search="{{ bytes }}" data-order="{{ bytes }}" title="{{ human }}">
-                                <code>{{ human }}</code>
+                            <td data-search="{{ bytes }}" data-order="{{ bytes }}">
+                                <code data-bs-toggle="tooltip" data-bs-title="{{ human }} ({{ bytes }} bytes)">
+                                    {{ human }}
+                                </code>
                             </td>
 {%- endmacro %}
 {%- macro render_state(state="unknown") %}
@@ -54,9 +58,9 @@
         {%- set state_class = "info" %}
         {%- set state_icon = "arrow-down-circle" %}
     {%- endif %}
-                            <td data-search="{{ state }}" data-order="{{ state }}" title="{{ state }}">
-                                <span class="bi bi-{{ state_icon }} flash-{{ state_class }}"></span>
-                                {{ state }}
+                            <td data-search="{{ state }}" data-order="{{ state }}">
+                                <span class="bi bi-{{ state_icon }} flash-{{ state_class }}" data-bs-toggle="tooltip" data-bs-title="{{ state }}"></span>
+                                <!-- {{ state }} -->
                             </td>
 {%- endmacro %}
 {%- macro render_ratio(ratio) %}
@@ -68,16 +72,22 @@
     {%- elif ratio >= 0.25 %}
         {%- set ratio_class = "low"  %}
     {% endif %}
-                            <td data-search="{{ ratio }}" data-order="{{ ratio }}" title="{{ ratio }}">
-                                <span class="fw-bold ratio-{{ ratio_class }}">
+                            <td data-search="{{ ratio }}" data-order="{{ ratio }}">
+                                <span class="fw-bold ratio-{{ ratio_class }}" data-bs-toggle="tooltip" data-bs-title="{{ ratio }}">
                                     {{ ratio|round(3) }}
                                 </span>
                             </td>
 {%- endmacro %}
 {%- macro render_added(added) %}
     {%- set human = added | unix2time | strftime %}
-                            <td data-search="{{ human }}" data-order="{{ added }}" title="{{ human }}">
-                                {{ human }}
+    {%- set class_name = "text-secondary" %}
+    {%- if now - added <= 86400 %}
+        {%- set class_name = "text-light" %}
+    {%- endif  %}
+                            <td data-search="{{ human }}" data-order="{{ added }}">
+                                <span class="{{ class_name }}" data-bs-toggle="tooltip" data-bs-title="{{ human }}">
+                                    {{ human | replace('@', '<span class="bi bi-clock text-primary"></span>') }}
+                                </span>
                             </td>
 {%- endmacro %}
 {%- macro render_torrent(torrent) %}
@@ -118,5 +128,7 @@
                             responsive: { responsive: true },
                         }
                     );
+                    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 </script>
 {%- endblock content %}
