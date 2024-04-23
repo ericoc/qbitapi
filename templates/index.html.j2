@@ -23,8 +23,24 @@
 {%- endmacro  %}
 {%- macro render_name(name) %}
                             <td data-search="{{ name }}" data-order="{{ name }}">
+    {%- set name_color = "danger" %}
+    {%- set name_icon = "question-square" %}
+    {%- if " 2160p " in name or ".2160p." in name or ".4K." in name or " 4K " in name %}
+        {%- set name_color = "warning" %}
+        {%- set name_icon = "badge-4k" %}
+    {%- elif " 1080p " in name or ".1080p." in name %}
+        {%- set name_color = "primary" %}
+        {%- set name_icon = "badge-hd" %}
+    {%- elif ".720p." in name or " 720p " in name %}
+        {%- set name_color = "info" %}
+        {%- set name_icon = "badge-hd" %}
+    {%- elif ".MacOS." in name or " MacOS " in name %}
+        {%- set name_color = "danger-emphasis" %}
+        {%- set name_icon = "apple" %}
+    {%- endif  %}
                                 <small data-bs-toggle="tooltip" data-bs-title="{{ name }}">
                                     {{ name }}
+                                    <span class="bi bi-{{ name_icon }} text-{{ name_color }}"></span>
                                 </small>
                             </td>
 {%- endmacro  %}
@@ -121,14 +137,17 @@
                 <script>
                     const table = new DataTable("#torrents",
                         {
+                            dom: "lpftrip",
+                            drawCallback: function (settings) {
+                                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+                            },
                             lengthChange: true,
                             lengthMenu: [5, 10, 15, 20, 25, 50, 75, 100, { label: "all", value: -1}],
                             order: [[5, "desc"],],
-                            pageLength: 15,
+                            pageLength: 10,
                             responsive: { responsive: true },
                         }
                     );
-                    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 </script>
 {%- endblock content %}
